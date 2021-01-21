@@ -31,4 +31,37 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(PARAMETER)
-public @interface Assisted {}
+public @interface Assisted {
+  /**
+   * Returns an identifier for an {@link Assisted} parameter.
+   *
+   * <p>An assisted parameter should be uniquely defined within an {@link AssistedInject}
+   * constructor by the combination of its identifier and type.
+   *
+   * <p>In addition, each parameter in the {@link AssistedInject} constructor must have a matching
+   * parameter (identifier + type) in the associated {@link AssistedFactory} method that creates the
+   * assisted type.
+   *
+   * <p>Example:
+   *
+   * <pre><code>
+   * final class DataService {
+   *   {@literal @}AssistedInject
+   *   DataService(
+   *       DataFetcher dataFetcher,
+   *       {@literal @}Assisted String name,
+   *       {@literal @}Assisted("id") String id,
+   *       {@literal @}Assisted("repo") String repo) {}
+   * }
+   *
+   * {@literal @}AssistedFactory
+   * interface DataServiceFactory {
+   *   DataService create(
+   *       String name,
+   *       {@literal @}Assisted("id") String id,
+   *       {@literal @}Assisted("repo") String repo);
+   * }
+   * </code></pre>
+   */
+  String value() default "";
+}
